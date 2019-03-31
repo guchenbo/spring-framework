@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,8 +15,6 @@
  */
 
 package org.springframework.test.web.servlet.samples.standalone.resultmatchers;
-
-import java.nio.charset.Charset;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,8 +42,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
  */
 public class ContentAssertionTests {
 
-	public static final MediaType TEXT_PLAIN_UTF8 = new MediaType("text", "plain", Charset.forName("UTF-8"));
-
 	private MockMvc mockMvc;
 
 	@Before
@@ -56,8 +52,10 @@ public class ContentAssertionTests {
 	@Test
 	public void testContentType() throws Exception {
 		this.mockMvc.perform(get("/handle").accept(MediaType.TEXT_PLAIN))
-			.andExpect(content().contentType(MediaType.TEXT_PLAIN))
-			.andExpect(content().contentType("text/plain"));
+			.andExpect(content().contentType(MediaType.valueOf("text/plain;charset=ISO-8859-1")))
+			.andExpect(content().contentType("text/plain;charset=ISO-8859-1"))
+			.andExpect(content().contentTypeCompatibleWith("text/plain"))
+			.andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
 
 		this.mockMvc.perform(get("/handleUtf8"))
 			.andExpect(content().contentType(MediaType.valueOf("text/plain;charset=UTF-8")))

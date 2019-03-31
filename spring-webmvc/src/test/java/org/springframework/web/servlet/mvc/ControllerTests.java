@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,7 +49,7 @@ public class ControllerTests {
 		ParameterizableViewController pvc = new ParameterizableViewController();
 		pvc.setViewName(viewName);
 		// We don't care about the params.
-		ModelAndView mv = pvc.handleRequest(new MockHttpServletRequest("GET", "foo.html"), null);
+		ModelAndView mv = pvc.handleRequest(new MockHttpServletRequest("GET", "foo.html"), new MockHttpServletResponse());
 		assertTrue("model has no data", mv.getModel().size() == 0);
 		assertTrue("model has correct viewname", mv.getViewName().equals(viewName));
 		assertTrue("getViewName matches", pvc.getViewName().equals(viewName));

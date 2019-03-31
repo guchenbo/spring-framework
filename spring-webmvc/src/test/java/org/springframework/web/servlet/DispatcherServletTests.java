@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,13 +55,11 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
-import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.util.WebUtils;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -101,14 +99,6 @@ public class DispatcherServletTests {
 
 	private ServletContext getServletContext() {
 		return servletConfig.getServletContext();
-	}
-
-	@Test
-	public void dispatcherServletGetServletNameDoesNotFailWithoutConfig() {
-		DispatcherServlet ds = new DispatcherServlet();
-		assertNull(ds.getServletConfig());
-		assertNull(ds.getServletName());
-		assertNull(ds.getServletContext());
 	}
 
 	@Test
@@ -574,7 +564,7 @@ public class DispatcherServletTests {
 		}
 		catch (ServletException ex) {
 			// expected
-			assertTrue(ex.getMessage().indexOf("No adapter for handler") != -1);
+			assertTrue(ex.getMessage().contains("No adapter for handler"));
 		}
 	}
 
@@ -594,7 +584,7 @@ public class DispatcherServletTests {
 		}
 		catch (ServletException ex) {
 			// expected
-			assertTrue(ex.getMessage().indexOf("failed0") != -1);
+			assertTrue(ex.getMessage().contains("failed0"));
 		}
 	}
 
@@ -697,38 +687,6 @@ public class DispatcherServletTests {
 		assertEquals(getServletContext(), myServlet.getServletConfig().getServletContext());
 		complexDispatcherServlet.destroy();
 		assertNull(myServlet.getServletConfig());
-	}
-
-	@Test
-	@SuppressWarnings("deprecation")
-	public void webApplicationContextLookup() {
-		MockServletContext servletContext = new MockServletContext();
-		MockHttpServletRequest request = new MockHttpServletRequest(servletContext, "GET", "/invalid.do");
-
-		try {
-			RequestContextUtils.getWebApplicationContext(request);
-			fail("Should have thrown IllegalStateException");
-		}
-		catch (IllegalStateException ex) {
-			// expected
-		}
-
-		try {
-			RequestContextUtils.getWebApplicationContext(request, servletContext);
-			fail("Should have thrown IllegalStateException");
-		}
-		catch (IllegalStateException ex) {
-			// expected
-		}
-
-		servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
-				new StaticWebApplicationContext());
-		try {
-			RequestContextUtils.getWebApplicationContext(request, servletContext);
-		}
-		catch (IllegalStateException ex) {
-			fail("Should not have thrown IllegalStateException: " + ex.getMessage());
-		}
 	}
 
 	@Test
@@ -862,6 +820,7 @@ public class DispatcherServletTests {
 		MockHttpServletRequest request = new MockHttpServletRequest(getServletContext(), "OPTIONS", "/foo");
 		MockHttpServletResponse response = spy(new MockHttpServletResponse());
 		DispatcherServlet servlet = new DispatcherServlet();
+		servlet.setDispatchOptionsRequest(false);
 		servlet.service(request, response);
 		verify(response, never()).getHeader(anyString()); // SPR-10341
 		assertThat(response.getHeader("Allow"), equalTo("GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH"));
@@ -921,7 +880,8 @@ public class DispatcherServletTests {
 	}
 
 
-	private static class TestWebContextInitializer implements ApplicationContextInitializer<ConfigurableWebApplicationContext> {
+	private static class TestWebContextInitializer
+			implements ApplicationContextInitializer<ConfigurableWebApplicationContext> {
 
 		@Override
 		public void initialize(ConfigurableWebApplicationContext applicationContext) {
@@ -930,7 +890,8 @@ public class DispatcherServletTests {
 	}
 
 
-	private static class OtherWebContextInitializer implements ApplicationContextInitializer<ConfigurableWebApplicationContext> {
+	private static class OtherWebContextInitializer
+			implements ApplicationContextInitializer<ConfigurableWebApplicationContext> {
 
 		@Override
 		public void initialize(ConfigurableWebApplicationContext applicationContext) {

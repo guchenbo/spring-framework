@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,18 +35,20 @@ public class XpathRequestMatchersTests {
 
 	private MockClientHttpRequest request;
 
+
 	@Before
 	public void setUp() throws IOException {
 		this.request = new MockClientHttpRequest();
 		this.request.getBody().write(RESPONSE_CONTENT.getBytes());
 	}
 
+
 	@Test
 	public void testNodeMatcher() throws Exception {
 		new XpathRequestMatchers("/foo/bar", null).node(Matchers.notNullValue()).match(this.request);
 	}
 
-	@Test(expected=AssertionError.class)
+	@Test(expected = AssertionError.class)
 	public void testNodeMatcherNoMatch() throws Exception {
 		new XpathRequestMatchers("/foo/bar", null).node(Matchers.nullValue()).match(this.request);
 	}
@@ -56,7 +58,7 @@ public class XpathRequestMatchersTests {
 		new XpathRequestMatchers("/foo/bar", null).exists().match(this.request);
 	}
 
-	@Test(expected=AssertionError.class)
+	@Test(expected = AssertionError.class)
 	public void testExistsNoMatch() throws Exception {
 		new XpathRequestMatchers("/foo/Bar", null).exists().match(this.request);
 	}
@@ -66,7 +68,7 @@ public class XpathRequestMatchersTests {
 		new XpathRequestMatchers("/foo/Bar", null).doesNotExist().match(this.request);
 	}
 
-	@Test(expected=AssertionError.class)
+	@Test(expected = AssertionError.class)
 	public void testDoesNotExistNoMatch() throws Exception {
 		new XpathRequestMatchers("/foo/bar", null).doesNotExist().match(this.request);
 	}
@@ -76,7 +78,7 @@ public class XpathRequestMatchersTests {
 		new XpathRequestMatchers("/foo/bar", null).nodeCount(2).match(this.request);
 	}
 
-	@Test(expected=AssertionError.class)
+	@Test(expected = AssertionError.class)
 	public void testNodeCountNoMatch() throws Exception {
 		new XpathRequestMatchers("/foo/bar", null).nodeCount(1).match(this.request);
 	}
@@ -86,7 +88,7 @@ public class XpathRequestMatchersTests {
 		new XpathRequestMatchers("/foo/bar[1]", null).string("111").match(this.request);
 	}
 
-	@Test(expected=AssertionError.class)
+	@Test(expected = AssertionError.class)
 	public void testStringNoMatch() throws Exception {
 		new XpathRequestMatchers("/foo/bar[1]", null).string("112").match(this.request);
 	}
@@ -96,7 +98,7 @@ public class XpathRequestMatchersTests {
 		new XpathRequestMatchers("/foo/bar[1]", null).number(111.0).match(this.request);
 	}
 
-	@Test(expected=AssertionError.class)
+	@Test(expected = AssertionError.class)
 	public void testNumberNoMatch() throws Exception {
 		new XpathRequestMatchers("/foo/bar[1]", null).number(111.1).match(this.request);
 	}
@@ -106,7 +108,7 @@ public class XpathRequestMatchersTests {
 		new XpathRequestMatchers("/foo/bar[2]", null).booleanValue(true).match(this.request);
 	}
 
-	@Test(expected=AssertionError.class)
+	@Test(expected = AssertionError.class)
 	public void testBooleanNoMatch() throws Exception {
 		new XpathRequestMatchers("/foo/bar[2]", null).booleanValue(false).match(this.request);
 	}

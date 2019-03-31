@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,6 +48,7 @@ import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFacto
  * @author Juergen Hoeller
  * @author Chris Beams
  * @author Sam Brannen
+ * @author Stephane Nicoll
  */
 public class JdbcNamespaceIntegrationTests {
 
@@ -163,6 +164,16 @@ public class JdbcNamespaceIntegrationTests {
 			"jdbc-config-multiple-datasources.xml", getClass()));
 		assertBeanPropertyValueOf("databaseName", "firstDataSource", factory);
 		assertBeanPropertyValueOf("databaseName", "secondDataSource", factory);
+	}
+
+	@Test
+	public void initializeWithCustomSeparator() throws Exception {
+		assertCorrectSetupAndCloseContext("jdbc-initialize-custom-separator.xml", 2, "dataSource");
+	}
+
+	@Test
+	public void embeddedWithCustomSeparator() throws Exception {
+		assertCorrectSetupAndCloseContext("jdbc-config-custom-separator.xml", 2, "dataSource");
 	}
 
 	private ClassPathXmlApplicationContext context(String file) {

@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,12 +19,11 @@ package org.springframework.oxm.jibx;
 import java.io.ByteArrayInputStream;
 import javax.xml.transform.stream.StreamSource;
 
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.springframework.oxm.AbstractUnmarshallerTests;
-import org.springframework.tests.Assume;
-import org.springframework.tests.TestGroup;
 
 import static org.junit.Assert.*;
 
@@ -35,15 +34,18 @@ import static org.junit.Assert.*;
  * @author Arjen Poutsma
  * @author Sam Brannen
  */
+@Deprecated
 public class JibxUnmarshallerTests extends AbstractUnmarshallerTests<JibxMarshaller> {
 
 	protected static final String INPUT_STRING_WITH_SPECIAL_CHARACTERS =
 			"<tns:flights xmlns:tns=\"http://samples.springframework.org/flight\">" +
 					"<tns:flight><tns:airline>Air Libert\u00e9</tns:airline><tns:number>42</tns:number></tns:flight></tns:flights>";
 
+
 	@BeforeClass
 	public static void compilerAssumptions() {
-		Assume.group(TestGroup.CUSTOM_COMPILATION);
+		// JiBX compiler is currently not compatible with JDK 9
+		Assume.assumeTrue(System.getProperty("java.version").startsWith("1.8."));
 	}
 
 
@@ -69,6 +71,7 @@ public class JibxUnmarshallerTests extends AbstractUnmarshallerTests<JibxMarshal
 		assertNotNull("Flight is null", flight);
 		assertEquals("Number is invalid", 42L, flight.getNumber());
 	}
+
 
 	@Test
 	@Override

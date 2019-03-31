@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,7 +39,8 @@ import org.springframework.util.StreamUtils;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-public abstract class AbstractAsyncHttpRequestFactoryTestCase extends AbstractJettyServerTestCase {
+@SuppressWarnings("deprecation")
+public abstract class AbstractAsyncHttpRequestFactoryTestCase extends AbstractMockWebServerTestCase {
 
 	protected AsyncClientHttpRequestFactory factory;
 
@@ -221,5 +222,15 @@ public abstract class AbstractAsyncHttpRequestFactoryTestCase extends AbstractJe
 			}
 		}
 	}
+
+	@Test
+	public void cancel() throws Exception {
+		URI uri = new URI(baseUrl + "/status/notfound");
+		AsyncClientHttpRequest request = this.factory.createAsyncRequest(uri, HttpMethod.GET);
+		Future<ClientHttpResponse> futureResponse = request.executeAsync();
+		futureResponse.cancel(true);
+		assertTrue(futureResponse.isCancelled());
+	}
+
 
 }

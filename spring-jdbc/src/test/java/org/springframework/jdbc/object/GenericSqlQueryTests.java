@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2014 the original author or authors.
+ * Copyright 2002-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,6 @@
  */
 
 package org.springframework.jdbc.object;
-
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,8 +29,6 @@ import javax.sql.DataSource;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.ClassPathResource;
@@ -43,13 +40,14 @@ import static org.mockito.BDDMockito.*;
 
 /**
  * @author Thomas Risberg
+ * @author Juergen Hoeller
  */
-public class GenericSqlQueryTests  {
+public class GenericSqlQueryTests {
 
 	private static final String SELECT_ID_FORENAME_NAMED_PARAMETERS_PARSED =
-		"select id, forename from custmr where id = ? and country = ?";
+			"select id, forename from custmr where id = ? and country = ?";
 
-	private BeanFactory beanFactory;
+	private DefaultListableBeanFactory beanFactory;
 
 	private Connection connection;
 
@@ -57,10 +55,11 @@ public class GenericSqlQueryTests  {
 
 	private ResultSet resultSet;
 
+
 	@Before
 	public void setUp() throws Exception {
 		this.beanFactory = new DefaultListableBeanFactory();
-		new XmlBeanDefinitionReader((BeanDefinitionRegistry) this.beanFactory).loadBeanDefinitions(
+		new XmlBeanDefinitionReader(this.beanFactory).loadBeanDefinitions(
 				new ClassPathResource("org/springframework/jdbc/object/GenericSqlQueryTests-context.xml"));
 		DataSource dataSource = mock(DataSource.class);
 		this.connection = mock(Connection.class);
@@ -72,14 +71,20 @@ public class GenericSqlQueryTests  {
 	}
 
 	@Test
-	public void testPlaceHoldersCustomerQuery() throws SQLException {
-		SqlQuery<?> query = (SqlQuery<?>) beanFactory.getBean("queryWithPlaceHolders");
+	public void testCustomerQueryWithPlaceholders() throws SQLException {
+		SqlQuery<?> query = (SqlQuery<?>) beanFactory.getBean("queryWithPlaceholders");
 		doTestCustomerQuery(query, false);
 	}
 
 	@Test
-	public void testNamedParameterCustomerQuery() throws SQLException {
+	public void testCustomerQueryWithNamedParameters() throws SQLException {
 		SqlQuery<?> query = (SqlQuery<?>) beanFactory.getBean("queryWithNamedParameters");
+		doTestCustomerQuery(query, true);
+	}
+
+	@Test
+	public void testCustomerQueryWithRowMapperInstance() throws SQLException {
+		SqlQuery<?> query = (SqlQuery<?>) beanFactory.getBean("queryWithRowMapperBean");
 		doTestCustomerQuery(query, true);
 	}
 
@@ -93,7 +98,7 @@ public class GenericSqlQueryTests  {
 
 		List<?> queryResults;
 		if (namedParameters) {
-			Map<String, Object> params = new HashMap<String, Object>(2);
+			Map<String, Object> params = new HashMap<>(2);
 			params.put("id", 1);
 			params.put("country", "UK");
 			queryResults = query.executeByNamedParam(params);

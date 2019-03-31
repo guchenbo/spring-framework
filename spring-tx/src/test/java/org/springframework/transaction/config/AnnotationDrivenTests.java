@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,10 +20,10 @@ import java.io.Serializable;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-
 import org.junit.Test;
 
 import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -47,8 +47,16 @@ public class AnnotationDrivenTests {
 
 	@Test
 	public void withConfigurationClass() throws Exception {
+		ApplicationContext parent = new AnnotationConfigApplicationContext(TransactionManagerConfiguration.class);
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"annotationDrivenConfigurationClassTests.xml"}, getClass(), parent);
+		doTestWithMultipleTransactionManagers(context);
+	}
+
+	@Test
+	public void withAnnotatedTransactionManagers() throws Exception {
 		AnnotationConfigApplicationContext parent = new AnnotationConfigApplicationContext();
-		parent.register(TransactionManagerConfiguration.class);
+		parent.registerBeanDefinition("transactionManager1", new RootBeanDefinition(SynchTransactionManager.class));
+		parent.registerBeanDefinition("transactionManager2", new RootBeanDefinition(NoSynchTransactionManager.class));
 		parent.refresh();
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"annotationDrivenConfigurationClassTests.xml"}, getClass(), parent);
 		doTestWithMultipleTransactionManagers(context);
